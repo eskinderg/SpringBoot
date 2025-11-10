@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -22,7 +23,7 @@ public class NoteController {
 
     @GetMapping()
     @PreAuthorize("hasRole('Read')")
-    public List<Note> get() {
+    public List<Map<String, Object>> get() {
         return noteService.getNotes();
     }
 
@@ -32,21 +33,21 @@ public class NoteController {
         return new ResponseEntity<>(noteService.save(note), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('Write')")
-    @PutMapping()
-    public ResponseEntity<Note> put(@RequestBody Note note) {
-        try {
-            return new ResponseEntity<Note>(noteService.update(note), HttpStatus.OK);
-        } catch (SyncConflictException ex) {
-            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.CONFLICT);
-        } catch (NotFoundException ex) {
-            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.NOT_FOUND);
-        }
-    }
+//    @PreAuthorize("hasRole('Write')")
+//    @PutMapping()
+//    public ResponseEntity<Note> put(@RequestBody Note note) {
+//        try {
+//            return new ResponseEntity<Note>(noteService.update(note), HttpStatus.OK);
+//        } catch (SyncConflictException ex) {
+//            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.CONFLICT);
+//        } catch (NotFoundException ex) {
+//            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     @PreAuthorize("hasRole('Write')")
     @PutMapping("/update")
-    public ResponseEntity<List<Note>> Update(@RequestBody List<Note> notes) {
+    public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) {
         try {
             return new ResponseEntity<>(noteService.upsert(notes), HttpStatus.OK);
         } catch (SyncConflictException ex) {

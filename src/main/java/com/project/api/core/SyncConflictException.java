@@ -1,8 +1,11 @@
 package com.project.api.core;
 
 import com.project.api.model.Note;
+import jakarta.persistence.TupleElement;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SyncConflictException extends RuntimeException {
     private Note note;
@@ -22,7 +25,14 @@ public class SyncConflictException extends RuntimeException {
         return this.note;
     }
 
-    public List<Note> getNotes() {
-        return this.notes;
+    public List<Map<String, Object>> getNotes() {
+//        return this.notes;
+       return this.notes.stream()
+                .map(tuple -> {
+                    Map<String, Object> rowMap = new java.util.HashMap<>();
+                    // Use getElements() to iterate through columns and aliases
+                    return rowMap;
+                })
+                .collect(Collectors.toList());
     }
 }

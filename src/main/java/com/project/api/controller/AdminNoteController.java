@@ -36,7 +36,7 @@ public class AdminNoteController {
 
     @PreAuthorize("hasRole('Admin')")
     @PutMapping("/update")
-    public ResponseEntity<List<Note>> Update(@RequestBody List<Note> notes) throws JsonProcessingException {
+    public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) throws JsonProcessingException {
         try {
             return new ResponseEntity<>(adminNoteService.bulkUpdate(notes), HttpStatus.OK);
         } catch (SyncConflictException ex) {
@@ -60,7 +60,7 @@ public class AdminNoteController {
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
         return new ResponseEntity<>(adminNoteService.getUsers(), HttpStatus.OK);
     }
 

@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AdminNoteRepository extends JpaRepository<Note, NoteId> {
-    @Query("select n from Note n ORDER BY n.dateModified DESC")
-    List<Note> getNotes();
+//    @Query("select n from Note n ORDER BY n.dateModified DESC")
+//    List<Note> getNotes();
 
     @Procedure(name = "getAdminNotes")
     List<Note> getAdminNotes();
@@ -20,8 +20,8 @@ public interface AdminNoteRepository extends JpaRepository<Note, NoteId> {
     @Query("select n from Note n where n.id = ?1")
     Note getNote(UUID noteId, UUID userId);
 
-    @Query("SELECT n.owner, n.userId, count(n.userId) FROM Note as n GROUP BY n.owner, n.userId")
-    List<Object> getUsers();
+//    @Query("SELECT n.owner, n.userId, count(n.userId) FROM Note as n GROUP BY n.owner, n.userId")
+//    List<Object> getUsers();
 
     @Procedure(name = "admin_bulk_update")
     List<Note> admin_bulk_update(@Param("json_notes") String notesJson);

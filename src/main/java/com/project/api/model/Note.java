@@ -18,12 +18,12 @@ public class Note {
     @Id
     @Column(name = "note_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
+    private UUID note_id;
 
     @Id
     @Column(name = "user_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID userId;
+    private UUID user_id;
 
     @Column(name = "header")
     private String header;
@@ -46,23 +46,23 @@ public class Note {
     private boolean active = true;
 
     @Column(name = "spell_check")
-    private boolean spellCheck;
+    private boolean spell_check;
 
     @DatabaseGeneratedValue
     @Column(name = "pin_order", nullable = false)
-    private Timestamp pinOrder = new Timestamp(new Date().getTime());
+    private Timestamp pin_order = new Timestamp(new Date().getTime());
 
     @CreationTimestamp
     @Column(name = "date_created", insertable = false, nullable = false)
-    private Timestamp dateCreated = new Timestamp(new Date().getTime());
+    private Timestamp date_created = new Timestamp(new Date().getTime());
 
     @DatabaseGeneratedValue
     @Column(name = "date_modified", nullable = false)
-    private Timestamp dateModified = new Timestamp(new Date().getTime());
+    private Timestamp date_modified = new Timestamp(new Date().getTime());
 
     @DatabaseGeneratedValue
     @Column(name = "date_archived", nullable = false)
-    private Timestamp dateArchived = new Timestamp(new Date().getTime());
+    private Timestamp date_archived = new Timestamp(new Date().getTime());
 
     @Column(name = "owner")
     private String owner;
@@ -70,12 +70,12 @@ public class Note {
     @Column(name = "text", length = 16777215, columnDefinition = "mediumtext")
     private String text;
 
-    public UUID getId() {
-        return id;
+    public UUID getNote_id() {
+        return note_id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setNote_id(UUID note_id) {
+        this.note_id = note_id;
     }
 
     public String getHeader() {
@@ -86,12 +86,12 @@ public class Note {
         this.header = header;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
     }
 
     public String getColour() {
@@ -142,44 +142,44 @@ public class Note {
         this.active = active;
     }
 
-    public boolean isSpellCheck() {
-        return spellCheck;
+    public boolean isSpell_check() {
+        return spell_check;
     }
 
-    public void setSpellCheck(boolean spellCheck) {
-        this.spellCheck = spellCheck;
+    public void setSpell_check(boolean spell_check) {
+        this.spell_check = spell_check;
     }
 
-    public Timestamp getPinOrder() {
-        return pinOrder;
+    public Timestamp getPin_order() {
+        return pin_order;
     }
 
-    public void setPinOrder(Timestamp pinOrder) {
-        this.pinOrder = pinOrder;
+    public void setPin_order(Timestamp pin_order) {
+        this.pin_order = pin_order;
     }
 
-    public Timestamp getDateCreated() {
-        return dateCreated;
+    public Timestamp getDate_created() {
+        return date_created;
     }
 
-    public void setDateCreated(Timestamp dateCreated) {
-        this.dateCreated = dateCreated;
+    public void setDate_created(Timestamp date_created) {
+        this.date_created = date_created;
     }
 
-    public Timestamp getDateModified() {
-        return dateModified;
+    public Timestamp getDate_modified() {
+        return date_modified;
     }
 
-    public void setDateModified(Timestamp dateModified) {
-        this.dateModified = dateModified;
+    public void setDate_modified(Timestamp date_modified) {
+        this.date_modified = date_modified;
     }
 
-    public Timestamp getDateArchived() {
-        return dateArchived;
+    public Timestamp getDate_archived() {
+        return date_archived;
     }
 
-    public void setDateArchived(Timestamp dateArchived) {
-        this.dateArchived = dateArchived;
+    public void setDate_archived(Timestamp date_archived) {
+        this.date_archived = date_archived;
     }
 
     public String getOwner() {

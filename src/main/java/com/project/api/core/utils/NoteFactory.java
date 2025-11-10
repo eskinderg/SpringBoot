@@ -5,7 +5,7 @@ import com.project.api.model.Note;
 
 public class NoteFactory {
     public static Note create(Note input) {
-        input.setUserId(CurrentAuthContext.getUserId());
+        input.setUser_id(CurrentAuthContext.getUserId());
         input.setOwner(CurrentAuthContext.getName());
         return input;
     }

@@ -13,6 +13,8 @@ import com.project.api.repository.AdminNoteRepository;
 import com.project.api.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TupleElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminNoteService {
@@ -67,10 +70,28 @@ public class AdminNoteService {
 //    }
 
     @Transactional
-    public List<Note> bulkUpdate(List<Note> notes) throws JsonProcessingException {
+    public List<Map<String, Object>> bulkUpdate(List<Note> notes) throws JsonProcessingException {
         try {
             String notesJson = JsonHelper.convertToJson(notes);
-            return this.adminNoteRepository.admin_bulk_update(notesJson);
+//            return this.adminNoteRepository.admin_bulk_update(notesJson);
+
+            String sql = "CALL admin_bulk_update(?)";
+            Query query = entityManager.createNativeQuery(sql, Tuple.class);
+            query.setParameter(1, notesJson);
+            @SuppressWarnings("unchecked")
+            List<Tuple> tupleResults = query.getResultList();
+            return tupleResults.stream()
+                    .map(tuple -> {
+                        Map<String, Object> rowMap = new java.util.HashMap<>();
+                        // Use getElements() to iterate through columns and aliases
+                        for (TupleElement<?> element : tuple.getElements()) {
+                            String alias = element.getAlias();
+                            Object value = tuple.get(alias);
+                            rowMap.put(alias, value);
+                        }
+                        return rowMap;
+                    })
+                    .collect(Collectors.toList());
         } catch (JpaSystemException ex) {
 
             SQLException sqlEx = (SQLException) ex.getCause().getCause();
@@ -89,7 +110,7 @@ public class AdminNoteService {
     public List<Note> bulkInsert(List<Note> notes) {
         notes.forEach(note -> {
             note.setOwner(CurrentAuthContext.getName());
-            note.setUserId(CurrentAuthContext.getUserId());
+            note.setUser_id(CurrentAuthContext.getUserId());
         });
         return adminNoteRepository.saveAll(notes);
     }
@@ -111,7 +132,24 @@ public class AdminNoteService {
     }
 
     @Transactional
-    public List<User> getUsers() {
-        return this.userRepository.getUsers();
+    public List<Map<String, Object>> getUsers() {
+//        return this.userRepository.getUsers();
+
+        String sql = "CALL getUsers()";
+        Query query = entityManager.createNativeQuery(sql, Tuple.class);
+        @SuppressWarnings("unchecked")
+        List<Tuple> tupleResults = query.getResultList();
+        return tupleResults.stream()
+                .map(tuple -> {
+                    Map<String, Object> rowMap = new java.util.HashMap<>();
+                    // Use getElements() to iterate through columns and aliases
+                    for (TupleElement<?> element : tuple.getElements()) {
+                        String alias = element.getAlias();
+                        Object value = tuple.get(alias);
+                        rowMap.put(alias, value);
+                    }
+                    return rowMap;
+                })
+                .collect(Collectors.toList());
     }
 }
