@@ -64,6 +64,14 @@ public class Note {
     @Column(name = "date_archived", nullable = false)
     private Timestamp date_archived = new Timestamp(new Date().getTime());
 
+    @DatabaseGeneratedValue
+    @Column(name = "date_deleted", nullable = false)
+    private Timestamp date_deleted = new Timestamp(new Date().getTime());
+
+    @DatabaseGeneratedValue
+    @Column(name = "last_modified_date", nullable = false)
+    private Timestamp last_modified_date = new Timestamp(new Date().getTime());
+
     @Column(name = "owner")
     private String owner;
 
@@ -164,6 +172,22 @@ public class Note {
 
     public void setDate_created(Timestamp date_created) {
         this.date_created = date_created;
+    }
+
+    public Timestamp getDate_deleted() {
+        return date_deleted;
+    }
+
+    public void setDate_deleted(Timestamp date_deleted) {
+        this.date_deleted = date_deleted;
+    }
+
+    public Timestamp getLast_modified_date() {
+        return last_modified_date;
+    }
+
+    public void setLast_modified_date(Timestamp last_modified_date) {
+        this.last_modified_date = last_modified_date;
     }
 
     public Timestamp getDate_modified() {
