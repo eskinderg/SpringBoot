@@ -50,7 +50,7 @@ public class Note {
 
     @DatabaseGeneratedValue
     @Column(name = "pin_order", nullable = false)
-    private Timestamp pin_order = new Timestamp(new Date().getTime());
+    private Number pin_order;
 
     @CreationTimestamp
     @Column(name = "date_created", insertable = false, nullable = false)
@@ -158,11 +158,11 @@ public class Note {
         this.spell_check = spell_check;
     }
 
-    public Timestamp getPin_order() {
+    public Number getPin_order() {
         return pin_order;
     }
 
-    public void setPin_order(Timestamp pin_order) {
+    public void setPin_order(Number pin_order) {
         this.pin_order = pin_order;
     }
 
