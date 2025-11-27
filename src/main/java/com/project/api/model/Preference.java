@@ -16,7 +16,7 @@ public class Preference {
     @Id
     @Column(name = "pref_id")
     @JdbcTypeCode(SqlTypes.INTEGER)
-    private int id;
+    private long id;
 
 
     @Column(name = "user_id")
@@ -26,7 +26,7 @@ public class Preference {
     @Column(name = "dark_mode")
     private boolean dark_mode;
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -38,7 +38,7 @@ public class Preference {
         this.dark_mode = dark_mode;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
