@@ -21,12 +21,12 @@ public class PreferenceController {
     @GetMapping()
     @PreAuthorize("hasRole('Read')")
     public ResponseEntity<List<Map<String, Object>>> get() {
-        return new ResponseEntity<>(preferenceService.getUserPreference(), HttpStatus.FOUND);
+        return new ResponseEntity<>(preferenceService.getUserPreference(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('Write')")
     @PutMapping()
     public ResponseEntity<List<Map<String, Object>>> put(@RequestBody List<Preference> preferences) {
-        return new ResponseEntity<>(preferenceService.upsert(preferences), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(preferenceService.upsert(preferences), HttpStatus.OK);
     }
 }
