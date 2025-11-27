@@ -15,7 +15,7 @@ public class Preference {
 
     @Id
     @Column(name = "pref_id")
-    private long id;
+    private long pref_id;
 
     @Column(name = "user_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -24,8 +24,8 @@ public class Preference {
     @Column(name = "dark_mode")
     private boolean dark_mode;
 
-    public void setId(long id) {
-        this.id = id;
+    public void setPref_id(long pref_id) {
+        this.pref_id = pref_id;
     }
 
     public void setUser_id(UUID user_id) {
@@ -36,8 +36,8 @@ public class Preference {
         this.dark_mode = dark_mode;
     }
 
-    public long getId() {
-        return id;
+    public long getPref_id() {
+        return pref_id;
     }
 
     public UUID getUser_id() {
