@@ -15,9 +15,7 @@ public class Preference {
 
     @Id
     @Column(name = "pref_id")
-    @JdbcTypeCode(SqlTypes.INTEGER)
     private long id;
-
 
     @Column(name = "user_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
