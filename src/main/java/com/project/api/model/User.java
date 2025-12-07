@@ -19,7 +19,7 @@ public class User {
     @Id
     @Column(name = "user_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
+    private UUID user_id;
 
     @Column(name = "owner")
     private String owner;
@@ -34,12 +34,12 @@ public class User {
     @Column(name = "created_at", insertable = false, nullable = false)
     private Timestamp createdAt = new Timestamp(new Date().getTime());
 
-    public UUID getId() {
-        return id;
+    public UUID getUser_id() {
+        return this.user_id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
     }
 
     public String getOwner() {
