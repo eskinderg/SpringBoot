@@ -30,9 +30,10 @@ public class User {
     @Column(name = "email")
     private String email;
 
+
     @CreationTimestamp
     @Column(name = "created_at", insertable = false, nullable = false)
-    private Timestamp createdAt = new Timestamp(new Date().getTime());
+    private Timestamp created_at = new Timestamp(new Date().getTime());
 
     public UUID getUser_id() {
         return this.user_id;
@@ -66,11 +67,11 @@ public class User {
         this.email = email;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
+    public Timestamp getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
     }
 }
