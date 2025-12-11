@@ -24,6 +24,9 @@ public class Preference {
     @Column(name = "dark_mode")
     private boolean dark_mode;
 
+    @Column(name = "language")
+    private String language;
+
     public void setPref_id(long pref_id) {
         this.pref_id = pref_id;
     }
@@ -47,4 +50,8 @@ public class Preference {
     public boolean isDark_mode() {
         return dark_mode;
     }
+
+    public void setLanguage(String language){ this.language = language;}
+
+    public String getLanguage() {return language;}
 }

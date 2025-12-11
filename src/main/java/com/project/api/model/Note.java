@@ -45,6 +45,9 @@ public class Note {
     @Column(name = "active")
     private boolean active = true;
 
+    @Column(name = "readonly")
+    private boolean readonly = false;
+
     @Column(name = "spell_check")
     private boolean spell_check;
 
@@ -148,6 +151,14 @@ public class Note {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
     }
 
     public boolean isSpell_check() {
