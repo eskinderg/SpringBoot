@@ -1,6 +1,7 @@
 package com.project.api.controller;
 
 import com.project.api.model.Preference;
+import com.project.api.model.User;
 import com.project.api.service.PreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,5 +29,11 @@ public class PreferenceController {
     @PutMapping()
     public ResponseEntity<List<Map<String, Object>>> put(@RequestBody List<Preference> preferences) {
         return new ResponseEntity<>(preferenceService.upsert(preferences), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('Write')")
+    @PutMapping("/update")
+    public ResponseEntity<List<Map<String, Object>>> update(@RequestBody List<User> users) {
+        return new ResponseEntity<>(preferenceService.upsertUserInfo(users), HttpStatus.OK);
     }
 }
