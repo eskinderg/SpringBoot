@@ -133,7 +133,7 @@ public class PreferenceService {
     public List<Map<String, Object>> getUseInfo() {
 //        return this.noteRepository.getUserNotes(CurrentAuthContext.getUserId().toString());
 
-        String sql = "CALL getUserInfo(?)";
+        String sql = "CALL getUserInfo(?,?,?,?,?)";
         Query query = entityManager.createNativeQuery(sql, Tuple.class);
         query.setParameter(1, CurrentAuthContext.getUserId().toString());
         query.setParameter(2, CurrentAuthContext.getName());
