@@ -36,4 +36,10 @@ public class PreferenceController {
     public ResponseEntity<List<Map<String, Object>>> update(@RequestBody List<User> users) {
         return new ResponseEntity<>(preferenceService.upsertUserInfo(users), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('Write')")
+    @GetMapping("/userinfo")
+    public ResponseEntity<List<Map<String, Object>>> userInfo() {
+        return new ResponseEntity<>(preferenceService.getUseInfo(), HttpStatus.OK);
+    }
 }
