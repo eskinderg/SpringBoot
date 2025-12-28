@@ -136,6 +136,10 @@ public class PreferenceService {
         String sql = "CALL getUserInfo(?)";
         Query query = entityManager.createNativeQuery(sql, Tuple.class);
         query.setParameter(1, CurrentAuthContext.getUserId().toString());
+        query.setParameter(2, CurrentAuthContext.getName());
+        query.setParameter(3, CurrentAuthContext.getName());
+        query.setParameter(4, CurrentAuthContext.getUserEmail());
+        query.setParameter(5, ' ');
         @SuppressWarnings("unchecked")
         List<Tuple> tupleResults = query.getResultList();
         return tupleResults.stream()
