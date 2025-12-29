@@ -1,9 +1,6 @@
 package com.project.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
 import com.project.api.model.Note;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -52,20 +48,13 @@ public class NoteController {
     @PreAuthorize("hasRole('Read')")
     @PutMapping("/update")
     public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) {
-       if(CurrentAuthContext.hasRole("Write")){
-           try {
-               return new ResponseEntity<>(noteService.upsert(notes), HttpStatus.OK);
-           } catch (SyncConflictException ex) {
-               return new ResponseEntity<>(ex.getNotes(), HttpStatus.CONFLICT);
-           } catch (NotFoundException ex) {
-               return new ResponseEntity<>(ex.getNotes(), HttpStatus.NOT_FOUND);
-           }
-       }else {
-           List<Map<String, Object>> readOnlyNotes = notes.stream()
-                   .map(note -> new ObjectMapper().convertValue(note, new TypeReference<Map<String, Object>>() {}))
-                   .collect(Collectors.toList());
-           return new ResponseEntity<>(readOnlyNotes, HttpStatus.OK);
-       }
+        try {
+            return new ResponseEntity<>(noteService.upsert(notes), HttpStatus.OK);
+        } catch (SyncConflictException ex) {
+            return new ResponseEntity<>(ex.getNotes(), HttpStatus.CONFLICT);
+        } catch (NotFoundException ex) {
+            return new ResponseEntity<>(ex.getNotes(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PreAuthorize("hasRole('Write')")

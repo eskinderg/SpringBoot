@@ -1,6 +1,8 @@
 package com.project.api.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.Constants;
 import com.project.api.core.NotFoundException;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,47 +94,51 @@ public class NoteService {
 
     @Transactional
     public List<Map<String, Object>> upsert(List<Note> notes) {
-        try {
-            String notesJson = JsonHelper.convertToJson(notes.stream().map(NoteFactory::create).toList());
+        if(CurrentAuthContext.hasRole("Write")) {
+            try {
+                String notesJson = JsonHelper.convertToJson(notes.stream().map(NoteFactory::create).toList());
 //            return noteRepository.note_bulk_upsert(CurrentAuthContext.getUserId().toString(), CurrentAuthContext.getName(), notesJson);
 
-            String sql = "CALL note_bulk_upsert(?,?,?)";
-            Query query = entityManager.createNativeQuery(sql, Tuple.class);
-            query.setParameter(1, CurrentAuthContext.getUserId().toString());
-            query.setParameter(2, CurrentAuthContext.getName());
-            query.setParameter(3, notesJson);
-            @SuppressWarnings("unchecked")
-            List<Tuple> tupleResults = query.getResultList();
-            return tupleResults.stream()
-                    .map(tuple -> {
-                        Map<String, Object> rowMap = new java.util.HashMap<>();
-                        // Use getElements() to iterate through columns and aliases
-                        for (TupleElement<?> element : tuple.getElements()) {
-                            String alias = element.getAlias();
-                            Object value = tuple.get(alias);
-                            rowMap.put(alias, value);
-                        }
-                        return rowMap;
-                    })
-                    .collect(Collectors.toList());
-        } catch (JpaSystemException ex) {
-            SQLException sqlEx = (SQLException) ex.getCause().getCause();
-            String SQL_STATE = sqlEx.getSQLState();
+                String sql = "CALL note_bulk_upsert(?,?,?)";
+                Query query = entityManager.createNativeQuery(sql, Tuple.class);
+                query.setParameter(1, CurrentAuthContext.getUserId().toString());
+                query.setParameter(2, CurrentAuthContext.getName());
+                query.setParameter(3, notesJson);
+                @SuppressWarnings("unchecked")
+                List<Tuple> tupleResults = query.getResultList();
+                return tupleResults.stream()
+                        .map(tuple -> {
+                            Map<String, Object> rowMap = new java.util.HashMap<>();
+                            // Use getElements() to iterate through columns and aliases
+                            for (TupleElement<?> element : tuple.getElements()) {
+                                String alias = element.getAlias();
+                                Object value = tuple.get(alias);
+                                rowMap.put(alias, value);
+                            }
+                            return rowMap;
+                        })
+                        .collect(Collectors.toList());
+            } catch (JpaSystemException ex) {
+                SQLException sqlEx = (SQLException) ex.getCause().getCause();
+                String SQL_STATE = sqlEx.getSQLState();
 
-            if (SQL_STATE.equals(Constants.SQL_STATE_CONFLICT))
-                throw new SyncConflictException("Using old date to update the server", notes);
+                if (SQL_STATE.equals(Constants.SQL_STATE_CONFLICT))
+                    throw new SyncConflictException("Using old date to update the server", notes);
 
-            if (SQL_STATE.equals(Constants.SQL_NOT_FOUND))
-                throw new NotFoundException(ex.getMessage(), notes);
+                if (SQL_STATE.equals(Constants.SQL_NOT_FOUND))
+                    throw new NotFoundException(ex.getMessage(), notes);
 
-//            return notes;
-            return notes.stream()
-                    .map(tuple -> {
-                        Map<String, Object> rowMap = new java.util.HashMap<>();
-                        // Use getElements() to iterate through columns and aliases
-                        return rowMap;
-                    })
-                    .collect(Collectors.toList());
+                return notes.stream()
+                        .map(tuple -> {
+                            return (Map<String, Object>) new HashMap<String, Object>();
+                        })
+                        .collect(Collectors.toList());
+            }
+        } else {
+
+           return notes.stream()
+                    .map(note -> new ObjectMapper().convertValue(note, new TypeReference<Map<String, Object>>() {}))
+                    .toList();
         }
     }
 
