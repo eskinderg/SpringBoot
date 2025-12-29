@@ -49,7 +49,7 @@ public class NoteController {
 //        }
 //    }
 
-    @PreAuthorize("hasRole('Write')")
+    @PreAuthorize("hasRole('Read')")
     @PutMapping("/update")
     public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) {
        if(CurrentAuthContext.hasRole("Write")){
