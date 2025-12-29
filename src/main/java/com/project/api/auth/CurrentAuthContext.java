@@ -30,7 +30,7 @@ public class CurrentAuthContext {
     public static boolean hasRole(String role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("role"));
+                .anyMatch(a -> a.getAuthority().equals(role));
     }
 
 }
