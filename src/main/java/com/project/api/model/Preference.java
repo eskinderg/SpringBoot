@@ -27,31 +27,35 @@ public class Preference {
     @Column(name = "language")
     private String language;
 
-    public void setPref_id(long pref_id) {
-        this.pref_id = pref_id;
-    }
-
-    public void setUser_id(UUID user_id) {
-        this.user_id = user_id;
-    }
-
-    public void setDark_mode(boolean dark_mode) {
-        this.dark_mode = dark_mode;
-    }
-
     public long getPref_id() {
         return pref_id;
+    }
+
+    public void setPref_id(long pref_id) {
+        this.pref_id = pref_id;
     }
 
     public UUID getUser_id() {
         return user_id;
     }
 
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
+    }
+
     public boolean isDark_mode() {
         return dark_mode;
     }
 
-    public void setLanguage(String language){ this.language = language;}
+    public void setDark_mode(boolean dark_mode) {
+        this.dark_mode = dark_mode;
+    }
 
-    public String getLanguage() {return language;}
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 }

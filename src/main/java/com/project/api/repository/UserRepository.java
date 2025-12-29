@@ -1,4 +1,5 @@
 package com.project.api.repository;
+
 import com.project.api.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;

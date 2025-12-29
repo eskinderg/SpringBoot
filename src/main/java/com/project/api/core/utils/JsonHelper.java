@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.project.api.model.Note;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,7 +63,8 @@ public class JsonHelper {
 
     public static <T> List<T> parseNotesFromJson(String json) {
         try {
-            return objectMapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<List<T>>() {});
+            return objectMapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<List<T>>() {
+            });
         } catch (Exception e) {
             throw new RuntimeException("Error parsing notes from JSON", e);
         }
@@ -72,7 +72,8 @@ public class JsonHelper {
 
     public static <T> T parseNoteFromJson(String json) {
         try {
-            return objectMapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<T>() {});
+            return objectMapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<T>() {
+            });
         } catch (Exception e) {
             throw new RuntimeException("Error parsing note from JSON", e);
         }

@@ -1,7 +1,6 @@
 package com.project.api.core;
 
 import com.project.api.model.Note;
-import jakarta.persistence.TupleElement;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class SyncConflictException extends RuntimeException {
 
     public List<Map<String, Object>> getNotes() {
 //        return this.notes;
-       return this.notes.stream()
+        return this.notes.stream()
                 .map(tuple -> {
                     Map<String, Object> rowMap = new java.util.HashMap<>();
                     // Use getElements() to iterate through columns and aliases
