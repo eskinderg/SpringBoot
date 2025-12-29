@@ -25,19 +25,19 @@ public class PreferenceController {
         return new ResponseEntity<>(preferenceService.getUserPreference(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('Write')")
+    @PreAuthorize("hasRole('Read')")
     @PutMapping()
     public ResponseEntity<List<Map<String, Object>>> put(@RequestBody List<Preference> preferences) {
         return new ResponseEntity<>(preferenceService.upsert(preferences), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('Write')")
+    @PreAuthorize("hasRole('Read')")
     @PutMapping("/update")
     public ResponseEntity<List<Map<String, Object>>> update(@RequestBody List<User> users) {
         return new ResponseEntity<>(preferenceService.upsertUserInfo(users), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('Write')")
+    @PreAuthorize("hasRole('Read')")
     @GetMapping("/userinfo")
     public ResponseEntity<List<Map<String, Object>>> userInfo() {
         return new ResponseEntity<>(preferenceService.getUseInfo(), HttpStatus.OK);
