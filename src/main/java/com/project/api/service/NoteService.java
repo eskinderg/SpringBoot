@@ -10,7 +10,6 @@ import com.project.api.core.SyncConflictException;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.core.utils.NoteFactory;
 import com.project.api.model.Note;
-import com.project.api.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaSystemException;
@@ -25,22 +24,12 @@ import java.util.Map;
 public class NoteService {
 
     @Autowired
-    private NoteRepository noteRepository;
-
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Transactional
     public List<Map<String, Object>> getNotes() {
         String sql = "{CALL getUserNotes(?)}";
         return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString());
-    }
-
-    @Transactional
-    public Note save(Note note) {
-        note.setOwner(CurrentAuthContext.getName());
-        note.setUser_id(CurrentAuthContext.getUserId());
-        return this.noteRepository.save(note);
     }
 
     @Transactional
@@ -75,8 +64,9 @@ public class NoteService {
     }
 
     @Transactional
-    public List<Note> bulkInsert(List<Note> notes) throws JsonProcessingException {
+    public List<Map<String, Object>> bulkInsert(List<Note> notes) throws JsonProcessingException {
         String notesJson = JsonHelper.convertToJson(notes);
-        return this.noteRepository.note_bulk_insert(notesJson);
+        String sql = "{CALL note_bulk_insert(?)}";
+        return jdbcTemplate.queryForList(sql, notesJson);
     }
 }

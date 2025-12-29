@@ -27,11 +27,11 @@ public class NoteController {
         return noteService.getNotes();
     }
 
-    @PreAuthorize("hasRole('Write')")
-    @PostMapping()
-    public ResponseEntity<Note> post(@RequestBody Note note) {
-        return new ResponseEntity<>(noteService.save(note), HttpStatus.CREATED);
-    }
+//    @PreAuthorize("hasRole('Write')")
+//    @PostMapping()
+//    public ResponseEntity<Note> post(@RequestBody Note note) {
+//        return new ResponseEntity<>(noteService.save(note), HttpStatus.CREATED);
+//    }
 
 //    @PreAuthorize("hasRole('Write')")
 //    @PutMapping()
@@ -59,7 +59,7 @@ public class NoteController {
 
     @PreAuthorize("hasRole('Write')")
     @PostMapping("/insert")
-    public ResponseEntity<List<Note>> insert(@RequestBody List<Note> notes) throws JsonProcessingException {
-        return new ResponseEntity<List<Note>>(noteService.bulkInsert(notes), HttpStatus.CREATED);
+    public ResponseEntity<List<Map<String, Object>>> insert(@RequestBody List<Note> notes) throws JsonProcessingException {
+        return new ResponseEntity<List<Map<String, Object>>>(noteService.bulkInsert(notes), HttpStatus.CREATED);
     }
 }
