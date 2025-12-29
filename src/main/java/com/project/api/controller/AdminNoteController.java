@@ -24,14 +24,8 @@ public class AdminNoteController {
 
     @GetMapping()
     @PreAuthorize("hasRole('Admin')")
-    public List<Note> get() {
+    public List<Map<String, Object>> get() {
         return adminNoteService.getNotes();
-    }
-
-    @PreAuthorize("hasRole('Admin')")
-    @PostMapping()
-    public ResponseEntity<Note> post(@RequestBody Note note) {
-        return new ResponseEntity<>(adminNoteService.save(note), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('Admin')")
@@ -44,12 +38,6 @@ public class AdminNoteController {
         } catch (NotFoundException ex) {
             return new ResponseEntity<>(ex.getNotes(), HttpStatus.NOT_FOUND);
         }
-    }
-
-    @PreAuthorize("hasRole('Admin')")
-    @PostMapping("/insert")
-    public ResponseEntity<List<Note>> insert(@RequestBody List<Note> notes) {
-        return new ResponseEntity<>(adminNoteService.bulkInsert(notes), HttpStatus.CREATED);
     }
 
     @GetMapping("/usersinfo")
@@ -66,7 +54,7 @@ public class AdminNoteController {
 
     @PreAuthorize("hasRole('Admin')")
     @PostMapping("/users")
-    public ResponseEntity<List<User>> upsert(@RequestBody List<User> users) {
+    public ResponseEntity<List<Map<String, Object>>> upsert(@RequestBody List<User> users) {
         return new ResponseEntity<>(adminNoteService.updateUsers(users), HttpStatus.OK);
     }
 

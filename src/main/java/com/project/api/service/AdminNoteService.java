@@ -1,21 +1,14 @@
 package com.project.api.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.Constants;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.model.Note;
 import com.project.api.model.User;
-import com.project.api.repository.AdminNoteRepository;
-import com.project.api.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.TupleElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,75 +16,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminNoteService {
 
     @Autowired
-    private AdminNoteRepository adminNoteRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private JdbcTemplate jdbcTemplate;
 
     @Transactional
-    public List<Note> getNotes() {
-        return this.adminNoteRepository.getAdminNotes();
+    public List<Map<String, Object>> getNotes() {
+        String sql = "{CALL getAdminNotes()}";
+        return jdbcTemplate.queryForList(sql);
     }
-
-    @Transactional
-    public Note save(Note note) {
-        return this.adminNoteRepository.save(note);
-    }
-
-//    @Transactional
-//    public Note update(Note note) {
-//        try {
-//            List<Note> singleNoteList = new ArrayList<>();
-//            singleNoteList.add(note);
-//
-//            String noteJson = NoteJsonHelper.convertNotesToJson(singleNoteList);
-//            return this.adminNoteRepository.admin_update_note(noteJson);
-//        } catch (JpaSystemException ex) {
-//
-//            SQLException sqlEx = (SQLException) ex.getCause().getCause();
-//            String SQL_STATE = sqlEx.getSQLState();
-//
-//            if (SQL_STATE.equals(Constants.SQL_STATE_CONFLICT))
-//                throw new SyncConflictException("Using old date to update the server", note);
-//
-//            if (SQL_STATE.equals(Constants.SQL_NOT_FOUND))
-//                throw new NotFoundException(ex.getMessage(), note);
-//        }
-//        return null;
-//    }
 
     @Transactional
     public List<Map<String, Object>> bulkUpdate(List<Note> notes) throws JsonProcessingException {
         try {
             String notesJson = JsonHelper.convertToJson(notes);
-//            return this.adminNoteRepository.admin_bulk_update(notesJson);
-
-            String sql = "CALL admin_bulk_update(?)";
-            Query query = entityManager.createNativeQuery(sql, Tuple.class);
-            query.setParameter(1, notesJson);
-            @SuppressWarnings("unchecked")
-            List<Tuple> tupleResults = query.getResultList();
-            return tupleResults.stream()
-                    .map(tuple -> {
-                        Map<String, Object> rowMap = new java.util.HashMap<>();
-                        // Use getElements() to iterate through columns and aliases
-                        for (TupleElement<?> element : tuple.getElements()) {
-                            String alias = element.getAlias();
-                            Object value = tuple.get(alias);
-                            rowMap.put(alias, value);
-                        }
-                        return rowMap;
-                    })
-                    .collect(Collectors.toList());
+            String sql = "{CALL admin_bulk_update(?)}";
+            return jdbcTemplate.queryForList(sql, notesJson);
         } catch (JpaSystemException ex) {
 
             SQLException sqlEx = (SQLException) ex.getCause().getCause();
@@ -107,49 +50,21 @@ public class AdminNoteService {
     }
 
     @Transactional
-    public List<Note> bulkInsert(List<Note> notes) {
-        notes.forEach(note -> {
-            note.setOwner(CurrentAuthContext.getName());
-            note.setUser_id(CurrentAuthContext.getUserId());
-        });
-        return adminNoteRepository.saveAll(notes);
-    }
-
-    @Transactional
     public List<Map<String, Object>> getUsersNotesCount() {
-        Query query = entityManager.createNativeQuery("CALL getUsersNotesCount()");
-        query.unwrap(org.hibernate.query.NativeQuery.class)
-                .setResultTransformer(org.hibernate.transform.AliasToEntityMapResultTransformer.INSTANCE);
-
-        List<Map<String, Object>> result = query.getResultList();
-        return result;
+        String sql = "{CALL getUsersNotesCount()}";
+        return jdbcTemplate.queryForList(sql);
     }
 
     @Transactional
-    public List<User> updateUsers(List<User> users) {
+    public List<Map<String, Object>> updateUsers(List<User> users) {
         String usersJson = JsonHelper.convertToJson(users);
-        return this.userRepository.users_bulk_upsert(usersJson);
+        String sql = "{CALL users_bulk_upsert(?)}";
+        return jdbcTemplate.queryForList(sql, usersJson);
     }
 
     @Transactional
     public List<Map<String, Object>> getUsers() {
-//        return this.userRepository.getUsers();
-
-        String sql = "CALL getUsers()";
-        Query query = entityManager.createNativeQuery(sql, Tuple.class);
-        @SuppressWarnings("unchecked")
-        List<Tuple> tupleResults = query.getResultList();
-        return tupleResults.stream()
-                .map(tuple -> {
-                    Map<String, Object> rowMap = new java.util.HashMap<>();
-                    // Use getElements() to iterate through columns and aliases
-                    for (TupleElement<?> element : tuple.getElements()) {
-                        String alias = element.getAlias();
-                        Object value = tuple.get(alias);
-                        rowMap.put(alias, value);
-                    }
-                    return rowMap;
-                })
-                .collect(Collectors.toList());
+        String sql = "{CALL getUsers()}";
+        return jdbcTemplate.queryForList(sql);
     }
 }
