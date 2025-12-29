@@ -27,4 +27,10 @@ public class CurrentAuthContext {
         return extractClaim().get("name") != null ? (String) extractClaim().get("name") : (String) extractClaim().get("preferred_username");
     }
 
+    public static boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("role"));
+    }
+
 }
