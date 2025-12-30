@@ -68,7 +68,7 @@ public class PreferenceService {
     }
 
     @Transactional
-    public List<Map<String, Object>> getUseInfo() {
+    public List<Map<String, Object>> getUserInfo() {
         Map<String, Object> params = Map.of(
                 "p_user_id", CurrentAuthContext.getUserId().toString(),
                 "p_owner", CurrentAuthContext.getName(),

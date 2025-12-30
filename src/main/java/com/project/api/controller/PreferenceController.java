@@ -40,6 +40,6 @@ public class PreferenceController {
     @PreAuthorize("hasRole('Read')")
     @GetMapping("/userinfo")
     public ResponseEntity<List<Map<String, Object>>> userInfo() {
-        return new ResponseEntity<>(preferenceService.getUseInfo(), HttpStatus.OK);
+        return new ResponseEntity<>(preferenceService.getUserInfo(), HttpStatus.OK);
     }
 }

@@ -12,7 +12,6 @@ import com.project.api.core.utils.JsonHelper;
 import com.project.api.core.utils.NoteFactory;
 import com.project.api.model.Note;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
