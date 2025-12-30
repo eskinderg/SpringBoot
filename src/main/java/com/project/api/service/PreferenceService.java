@@ -3,11 +3,11 @@ package com.project.api.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.auth.CurrentAuthContext;
+import com.project.api.core.services.StoredProcedureService;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.model.Preference;
 import com.project.api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,21 +20,22 @@ import java.util.Map;
 public class PreferenceService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private StoredProcedureService spService;
 
     @Transactional
     public List<Map<String, Object>> getUserPreference() {
-
-        String sql = "{CALL getUserPreference(?)}";
-        return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString());
+        Map<String, Object> params = Map.of("p_user_id", CurrentAuthContext.getUserId().toString());
+        return spService.callProcedureForList("getUserPreference", params);
     }
 
     @Transactional
     public List<Map<String, Object>> upsert(List<Preference> preferences) {
         try {
             String preferencesJson = JsonHelper.convertToJson(preferences.stream().toList());
-            String sql = "{CALL preference_bulk_upsert(?,?)}";
-            return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString(), preferencesJson);
+            Map<String, Object> params = Map.of(
+                    "p_user_id", CurrentAuthContext.getUserId().toString(),
+                    "preferences_json", preferencesJson);
+            return spService.callProcedureForList("preference_bulk_upsert", params);
         } catch (JpaSystemException ex) {
             SQLException sqlEx = (SQLException) ex.getCause().getCause();
             String SQL_STATE = sqlEx.getSQLState();
@@ -50,8 +51,10 @@ public class PreferenceService {
     public List<Map<String, Object>> upsertUserInfo(List<User> users) {
         try {
             String usersJson = JsonHelper.convertToJson(users.stream().toList());
-            String sql = "{CALL user_info_upsert(?,?)}";
-            return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString(), usersJson);
+            Map<String, Object> params = Map.of(
+                    "p_user_id", CurrentAuthContext.getUserId().toString(),
+                    "users_json", usersJson);
+            return spService.callProcedureForList("user_info_upsert", params);
 
         } catch (JpaSystemException ex) {
             SQLException sqlEx = (SQLException) ex.getCause().getCause();
@@ -66,7 +69,13 @@ public class PreferenceService {
 
     @Transactional
     public List<Map<String, Object>> getUseInfo() {
-        String sql = "{CALL getUserInfo(?,?,?,?,?)}";
-        return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString(), CurrentAuthContext.getName(), CurrentAuthContext.getName(), CurrentAuthContext.getUserEmail(), " ");
+        Map<String, Object> params = Map.of(
+                "p_user_id", CurrentAuthContext.getUserId().toString(),
+                "p_owner", CurrentAuthContext.getName(),
+                "p_firstname", CurrentAuthContext.getName(),
+                "p_email", CurrentAuthContext.getUserEmail(),
+                "p_created_at", ""
+                );
+        return spService.callProcedureForList("getUserInfo", params);
     }
 }

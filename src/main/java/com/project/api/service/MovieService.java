@@ -1,8 +1,8 @@
 package com.project.api.service;
 
 import com.project.api.auth.CurrentAuthContext;
+import com.project.api.core.services.StoredProcedureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,35 +13,35 @@ import java.util.Map;
 public class MovieService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private StoredProcedureService spService;
 
     @Transactional
     public List<Map<String, Object>> getUserMovies() {
-        String sql = "{CALL getUserMovies(?)}";
-        return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString());
+        Map<String, Object> params = Map.of("p_user_id", CurrentAuthContext.getUserId().toString());
+        return spService.callProcedureForList("getUserMovies", params);
     }
 
     @Transactional
     public List<Map<String, Object>> getWatchedUserMovies() {
-        String sql = "{CALL getUserWatchedMovies(?)}";
-        return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString());
+        Map<String, Object> params = Map.of("p_user_id", CurrentAuthContext.getUserId().toString());
+        return spService.callProcedureForList("getUserWatchedMovies", params);
     }
 
     @Transactional
     public List<Map<String, Object>> movieBulkUpsert(String movies) {
-        String sql = "{CALL movies_bulk_upsert(?)}";
-        return jdbcTemplate.queryForList(sql, movies);
+        Map<String, Object> params = Map.of("movie_json", movies);
+        return spService.callProcedureForList("movies_bulk_upsert", params);
     }
 
     @Transactional
     public List<Map<String, Object>> watchedBulkUpsert(String movies) {
-        String sql = "{CALL watched_movies_upsert(?)}";
-        return jdbcTemplate.queryForList(sql, movies);
+        Map<String, Object> params = Map.of("movie_json", movies);
+        return spService.callProcedureForList("watched_movies_upsert", params);
     }
 
     @Transactional
     public List<Map<String, Object>> populateMovies(String movies) {
-        String sql = "{CALL populate_movies(?)}";
-        return jdbcTemplate.queryForList(sql, movies);
+        Map<String, Object> params = Map.of("movie_json", movies);
+        return spService.callProcedureForList("populate_movies", params);
     }
 }

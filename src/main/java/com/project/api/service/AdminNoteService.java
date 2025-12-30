@@ -1,9 +1,11 @@
 package com.project.api.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.Constants;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
+import com.project.api.core.services.StoredProcedureService;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.model.Note;
 import com.project.api.model.User;
@@ -23,18 +25,21 @@ public class AdminNoteService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private StoredProcedureService spService;
+
     @Transactional
     public List<Map<String, Object>> getNotes() {
-        String sql = "{CALL getAdminNotes()}";
-        return jdbcTemplate.queryForList(sql);
+        return spService.callProcedureForList("getAdminNotes", Map.of());
     }
 
     @Transactional
     public List<Map<String, Object>> bulkUpdate(List<Note> notes) throws JsonProcessingException {
         try {
             String notesJson = JsonHelper.convertToJson(notes);
-            String sql = "{CALL admin_bulk_update(?)}";
-            return jdbcTemplate.queryForList(sql, notesJson);
+            Map<String, Object> params = Map.of("notes_json", notesJson);
+            return spService.callProcedureForList("admin_bulk_update", params);
+
         } catch (JpaSystemException ex) {
 
             SQLException sqlEx = (SQLException) ex.getCause().getCause();
@@ -51,20 +56,18 @@ public class AdminNoteService {
 
     @Transactional
     public List<Map<String, Object>> getUsersNotesCount() {
-        String sql = "{CALL getUsersNotesCount()}";
-        return jdbcTemplate.queryForList(sql);
+        return spService.callProcedureForList("getUsersNotesCount", Map.of());
     }
 
     @Transactional
     public List<Map<String, Object>> updateUsers(List<User> users) {
         String usersJson = JsonHelper.convertToJson(users);
-        String sql = "{CALL users_bulk_upsert(?)}";
-        return jdbcTemplate.queryForList(sql, usersJson);
+        Map<String, Object> params = Map.of("users_json", usersJson);
+        return spService.callProcedureForList("users_bulk_upsert", params);
     }
 
     @Transactional
     public List<Map<String, Object>> getUsers() {
-        String sql = "{CALL getUsers()}";
-        return jdbcTemplate.queryForList(sql);
+        return spService.callProcedureForList("getUsers", Map.of());
     }
 }

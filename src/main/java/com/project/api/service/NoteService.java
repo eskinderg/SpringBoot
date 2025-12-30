@@ -7,6 +7,7 @@ import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.Constants;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
+import com.project.api.core.services.StoredProcedureService;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.core.utils.NoteFactory;
 import com.project.api.model.Note;
@@ -24,12 +25,12 @@ import java.util.Map;
 public class NoteService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private StoredProcedureService spService;
 
     @Transactional
     public List<Map<String, Object>> getNotes() {
-        String sql = "{CALL getUserNotes(?)}";
-        return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString());
+        Map<String, Object> params = Map.of("p_user_id", CurrentAuthContext.getUserId().toString());
+        return spService.callProcedureForList("getUserNotes", params);
     }
 
     @Transactional
@@ -37,8 +38,11 @@ public class NoteService {
         if (CurrentAuthContext.hasRole("Write")) {
             try {
                 String notesJson = JsonHelper.convertToJson(notes.stream().map(NoteFactory::create).toList());
-                String sql = "{CALL note_bulk_upsert(?, ?, ?)}";
-                return jdbcTemplate.queryForList(sql, CurrentAuthContext.getUserId().toString(), CurrentAuthContext.getName(), notesJson);
+                Map<String, Object> params = Map.of(
+                        "p_user_id", CurrentAuthContext.getUserId().toString(),
+                        "p_owner", CurrentAuthContext.getName(),
+                        "notes_json", notesJson);
+                return spService.callProcedureForList("note_bulk_upsert", params);
             } catch (JpaSystemException ex) {
                 SQLException sqlEx = (SQLException) ex.getCause().getCause();
                 String SQL_STATE = sqlEx.getSQLState();
@@ -66,7 +70,7 @@ public class NoteService {
     @Transactional
     public List<Map<String, Object>> bulkInsert(List<Note> notes) throws JsonProcessingException {
         String notesJson = JsonHelper.convertToJson(notes);
-        String sql = "{CALL note_bulk_insert(?)}";
-        return jdbcTemplate.queryForList(sql, notesJson);
+        Map<String, Object> params = Map.of("notes_json", notesJson);
+        return spService.callProcedureForList("note_bulk_insert", params);
     }
 }
