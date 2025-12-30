@@ -16,7 +16,8 @@ public class CurrentAuthContext {
     }
 
     public static String getUserEmail() {
-        return (String) extractClaim().get("email");
+        String mail = (String) extractClaim().get("email");
+        return (mail != null) ? mail : "";
     }
 
     public static UUID getUserId() {
