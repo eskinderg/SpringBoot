@@ -27,24 +27,6 @@ public class NoteController {
         return noteService.getNotes();
     }
 
-//    @PreAuthorize("hasRole('Write')")
-//    @PostMapping()
-//    public ResponseEntity<Note> post(@RequestBody Note note) {
-//        return new ResponseEntity<>(noteService.save(note), HttpStatus.CREATED);
-//    }
-
-//    @PreAuthorize("hasRole('Write')")
-//    @PutMapping()
-//    public ResponseEntity<Note> put(@RequestBody Note note) {
-//        try {
-//            return new ResponseEntity<Note>(noteService.update(note), HttpStatus.OK);
-//        } catch (SyncConflictException ex) {
-//            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.CONFLICT);
-//        } catch (NotFoundException ex) {
-//            return new ResponseEntity<Note>(ex.getNote(), HttpStatus.NOT_FOUND);
-//        }
-//    }
-
     @PreAuthorize("hasRole('Read')")
     @PutMapping("/update")
     public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) {
