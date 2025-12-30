@@ -1,7 +1,6 @@
 package com.project.api.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.project.api.auth.CurrentAuthContext;
 import com.project.api.core.Constants;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
