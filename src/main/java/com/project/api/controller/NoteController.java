@@ -1,6 +1,8 @@
 package com.project.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.core.NotFoundException;
 import com.project.api.core.SyncConflictException;
 import com.project.api.model.Note;
@@ -30,12 +32,13 @@ public class NoteController {
     @PreAuthorize("hasRole('Read')")
     @PutMapping("/update")
     public ResponseEntity<List<Map<String, Object>>> Update(@RequestBody List<Note> notes) {
+
         try {
             return new ResponseEntity<>(noteService.upsert(notes), HttpStatus.OK);
         } catch (SyncConflictException ex) {
-            return new ResponseEntity<>(ex.getNotes(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(this.noteList(notes), HttpStatus.CONFLICT);
         } catch (NotFoundException ex) {
-            return new ResponseEntity<>(ex.getNotes(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(this.noteList(notes), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -43,5 +46,11 @@ public class NoteController {
     @PostMapping("/insert")
     public ResponseEntity<List<Map<String, Object>>> insert(@RequestBody List<Note> notes) throws JsonProcessingException {
         return new ResponseEntity<List<Map<String, Object>>>(noteService.bulkInsert(notes), HttpStatus.CREATED);
+    }
+
+    private List<Map<String,Object>> noteList(List<Note> notes){
+       return notes.stream()
+               .map(note -> new ObjectMapper().convertValue(note, new TypeReference<Map<String, Object>>() {
+               })).toList();
     }
 }

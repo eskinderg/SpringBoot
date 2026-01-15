@@ -10,6 +10,10 @@ public class NotFoundException extends RuntimeException {
     private Note note;
     private List<Note> notes;
 
+    public NotFoundException(String msg) {
+        super(msg);
+    }
+
     public NotFoundException(String msg, Note note) {
         super(msg);
         this.note = note;

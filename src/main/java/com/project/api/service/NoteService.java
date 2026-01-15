@@ -4,19 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.auth.CurrentAuthContext;
-import com.project.api.core.Constants;
-import com.project.api.core.NotFoundException;
-import com.project.api.core.SyncConflictException;
 import com.project.api.core.services.StoredProcedureService;
 import com.project.api.core.utils.JsonHelper;
 import com.project.api.core.utils.NoteFactory;
 import com.project.api.model.Note;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -35,28 +30,12 @@ public class NoteService {
     @Transactional
     public List<Map<String, Object>> upsert(List<Note> notes) {
         if (CurrentAuthContext.hasRole("Write")) {
-            try {
                 String notesJson = JsonHelper.convertToJson(notes.stream().map(NoteFactory::create).toList());
                 Map<String, Object> params = Map.of(
                         "p_user_id", CurrentAuthContext.getUserId().toString(),
                         "p_owner", CurrentAuthContext.getName(),
                         "notes_json", notesJson);
                 return spService.callProcedureForList("note_bulk_upsert", params);
-            } catch (JpaSystemException ex) {
-                SQLException sqlEx = (SQLException) ex.getCause().getCause();
-                String SQL_STATE = sqlEx.getSQLState();
-
-                if (SQL_STATE.equals(Constants.SQL_STATE_CONFLICT))
-                    throw new SyncConflictException("Using old date to update the server", notes);
-
-                if (SQL_STATE.equals(Constants.SQL_NOT_FOUND))
-                    throw new NotFoundException(ex.getMessage(), notes);
-
-                return notes.stream()
-                        .map(note -> new ObjectMapper().convertValue(note, new TypeReference<Map<String, Object>>() {
-                        }))
-                        .toList();
-            }
         } else {
 
             return notes.stream()

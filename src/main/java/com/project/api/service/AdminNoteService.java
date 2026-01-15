@@ -9,8 +9,8 @@ import com.project.api.core.utils.JsonHelper;
 import com.project.api.model.Note;
 import com.project.api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,13 +39,13 @@ public class AdminNoteService {
             Map<String, Object> params = Map.of("notes_json", notesJson);
             return spService.callProcedureForList("admin_bulk_update", params);
 
-        } catch (JpaSystemException ex) {
+        } catch (UncategorizedSQLException ex) {
 
-            SQLException sqlEx = (SQLException) ex.getCause().getCause();
+            SQLException sqlEx = ex.getSQLException();
             String SQL_STATE = sqlEx.getSQLState();
 
             if (SQL_STATE.equals(Constants.SQL_STATE_CONFLICT))
-                throw new SyncConflictException("Using old date to update the server", notes);
+                throw new SyncConflictException("Admin bulk update","admin_bulk_update",ex.getSQLException(), notes );
 
             if (SQL_STATE.equals(Constants.SQL_NOT_FOUND))
                 throw new NotFoundException(ex.getMessage(), notes);
