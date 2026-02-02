@@ -16,31 +16,30 @@ public class Event {
     @Id
     @Column(name = "event_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
+    private UUID event_id;
     @Column(name = "user_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID userId;
+    private UUID user_id;
     @Column(name = "title")
     private String title;
     @Column(name = "complete")
     private boolean complete;
 
-    public UUID getId() {
-        return id;
+    public UUID getEvent_id() {
+       return this.event_id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setNote_id(UUID event_id) {
+       this.event_id = event_id;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getUser_id() {
+        return this.user_id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
     }
-
     public String getTitle() {
         return title;
     }

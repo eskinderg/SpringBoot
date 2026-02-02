@@ -15,8 +15,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
-    @Autowired
-    private EventService eventService;
+//    @Autowired
+//    private EventService eventService;
 
     @Autowired
     private MovieService movieService;
@@ -36,10 +36,10 @@ public class MovieController {
         return movieService.watchedBulkUpsert(movies);
     }
 
-    @PostMapping()
-    public Event post(@RequestBody Event event) {
-        return eventService.save(event);
-    }
+//    @PostMapping()
+//    public List<Map<String, Object>> post(@RequestBody Event event) {
+//        return eventService.save(event);
+//    }
 
 //    @PutMapping()
 //    public List<Object> put(@RequestBody List<Object> movies) throws JsonProcessingException {
@@ -56,17 +56,17 @@ public class MovieController {
         return movieService.populateMovies(movies);
     }
 
-    @PutMapping("/toggle")
-    public Event toggle(@RequestBody Event event) {
-        event.setComplete(!event.getComplete());
-        event.setUserId(CurrentAuthContext.getUserId());
-        return eventService.update(event);
-    }
+//    @PutMapping("/toggle")
+//    public Event toggle(@RequestBody Event event) {
+//        event.setComplete(!event.getComplete());
+//        event.setUser_id(CurrentAuthContext.getUserId());
+//        return eventService.update(event);
+//    }
 
-    @DeleteMapping("/{id}")
-    public Event delete(@PathVariable UUID id) {
-        return eventService.delete(id);
-    }
+//    @DeleteMapping("/{id}")
+//    public Event delete(@PathVariable UUID id) {
+//        return eventService.delete(id);
+//    }
 
     @DeleteMapping()
     public List<Event> delete(@RequestBody List<Event> events) {
