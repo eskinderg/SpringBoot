@@ -24,6 +24,8 @@ public class Event {
     private String title;
     @Column(name = "complete")
     private boolean complete;
+    @Column(name = "active")
+    private boolean active;
 
     public UUID getEvent_id() {
        return this.event_id;
@@ -58,6 +60,14 @@ public class Event {
 
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+
+    public boolean getActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }
