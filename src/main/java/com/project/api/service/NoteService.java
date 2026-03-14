@@ -28,6 +28,14 @@ public class NoteService {
     }
 
     @Transactional
+    public List<Map<String, Object>> getNoteHistory(Note note) {
+        Map<String, Object> params = Map.of(
+                "p_user_id", CurrentAuthContext.getUserId().toString(),
+                "p_note_id", note.getNote_id().toString());
+        return spService.callProcedureForList("getNoteHistory", params);
+    }
+
+    @Transactional
     public List<Map<String, Object>> upsert(List<Note> notes) {
         if (CurrentAuthContext.hasRole("Write")) {
                 String notesJson = JsonHelper.convertToJson(notes.stream().map(NoteFactory::create).toList());

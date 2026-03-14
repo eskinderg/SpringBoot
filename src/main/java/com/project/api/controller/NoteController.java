@@ -42,6 +42,12 @@ public class NoteController {
         }
     }
 
+    @PreAuthorize("hasRole('Read')")
+    @PutMapping("/history")
+    public ResponseEntity<List<Map<String, Object>>> History(@RequestBody Note note) {
+        return new ResponseEntity<List<Map<String, Object>>>(noteService.getNoteHistory(note), HttpStatus.OK);
+    }
+
     @PreAuthorize("hasRole('Write')")
     @PostMapping("/insert")
     public ResponseEntity<List<Map<String, Object>>> insert(@RequestBody List<Note> notes) throws JsonProcessingException {
