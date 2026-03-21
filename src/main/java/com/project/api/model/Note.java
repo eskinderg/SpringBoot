@@ -81,12 +81,12 @@ public class Note {
     @Column(name = "text", length = 16777215, columnDefinition = "mediumtext")
     private String text;
 
-    @Column(name = "version_id")
-    private long version_id;
+//    @Column(name = "version_id")
+//    private long version_id;
 
-    public long getVersion_id(){ return version_id; };
-
-    public void setVersion_id(long version_id) { this.version_id = version_id; };
+//    public long getVersion_id(){ return version_id; };
+//
+//    public void setVersion_id(long version_id) { this.version_id = version_id; };
 
     public UUID getNote_id() {
         return note_id;
